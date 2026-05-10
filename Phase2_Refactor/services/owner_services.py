@@ -45,8 +45,16 @@ def Add_new_product(inventory: list[Dict], New_ID: int, New_Item_Name: str, New_
 
     return []
 
-def Update_prices():
-    pass
+def Update_prices(inventory: list[Dict], search: str):
+    filtered_inventory = []
+
+    if search:
+        for item in inventory:
+            if search.lower() in item["name"].lower():
+                filtered_inventory.append(item)
+    else:
+        filtered_inventory = inventory
+    return filtered_inventory
 
 def Restock_Inv():
     pass

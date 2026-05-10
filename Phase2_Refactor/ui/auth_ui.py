@@ -1,6 +1,6 @@
 import streamlit as st
 from services.test_services import user_auth, registration
-from services.owner_services import Add_new_product
+from services.owner_services import Add_new_product, Update_prices
 import time
 from data import data_manager
 from pathlib import Path
@@ -92,6 +92,32 @@ def New_Product(file: str):
                 time.sleep(1)
                 st.rerun()
 
+def Update(file:str):
+    # Section 2: Update Prices (Read)
+    inventory = st.session_state["inventory"]
+    st.header("Update Prices")
+    with st.container(border=True):
+        search = st.text_input("Search", placeholder= "filter items by name")
+        filtered_inventory = Update_prices(inventory, search)
+        
+        if len(filtered_inventory) == 1:
+            selected_item = filtered_inventory[0]
 
-def Update():
-    pass
+            new_price = st.number_input(
+                        f"Set new price for {selected_item['name']}",
+                        min_value=0.0,value=float(selected_item["price"]),step=1.0)
+
+            if st.button("Update Price"):
+                selected_item["price"] = new_price
+
+                data_manager.save_data(file, inventory)
+                st.success(f"Price for {selected_item['name']} updated to ${new_price:.2f}")
+                time.sleep(1)
+                st.rerun()
+
+    if filtered_inventory:
+        st.subheader("Current Inventory")
+        st.dataframe(filtered_inventory, use_container_width= True)
+
+    else:
+        st.error("No item(s) found please try again")

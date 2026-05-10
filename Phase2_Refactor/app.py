@@ -53,10 +53,18 @@ elif st.session_state["role"] == "Owner":
             time.sleep(4)
             st.rerun()
 
-        tab1, tab2 = st.tabs(["Add New Product/Update Prices", "Restocking/Deleting"])    
+        tab1, tab2, tab3, tab4 = st.tabs(["Add New Product", "Update Prices", "Restocking", "Deleting" "Restocking", "Deleting"])    
 
         with tab1:
             auth_ui.New_Product("Phase2_Refactor/inventory.json")
 
         with tab2:
+            auth_ui.Update("Phase2_Refactor/inventory.json")
+
+        with tab3:
             pass
+
+        with tab4:
+            pass
+
+#
