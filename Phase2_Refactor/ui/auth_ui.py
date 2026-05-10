@@ -1,5 +1,6 @@
 import streamlit as st
 from services.test_services import user_auth, registration
+from services.owner_services import Add_new_product
 import time
 from data import data_manager
 from pathlib import Path
@@ -56,3 +57,41 @@ def reg_render(file : str):
                 
         st.write("---")
         st.dataframe(users)
+
+def New_Product(file: str):
+    # Section 1: Add New Product (Create)
+    inventory = st.session_state["inventory"]
+    st.header("Add New Product")
+    with st.container(border=True):
+        # Item ID
+        New_ID = st.number_input("Set an Unique Numerical ID", step = 1.0, format="%.f")
+
+        # Item Name
+        New_Item_Name = st.text_input("Name")
+
+        # Item Category
+        Current_Cat = ["","GPU", "Memory", "Motherboard", "Processor", "Power Supply", "Case", "Cooling", "Networking"]
+        New_Cat = st.selectbox("Category", Current_Cat)
+
+        # Item Price
+        New_Price = st.number_input("Insert Price", min_value=0.0, step=1.0, format="%.2f")
+
+        # Item Stock
+        New_Stock = st.number_input("Amount to inventory", min_value=0.0, step=1.0, format="%.f") 
+
+
+        if st.button("Submit Change"):
+
+            errors = Add_new_product(inventory, New_ID, New_Item_Name, New_Cat, New_Price, New_Stock)
+            if errors:
+                for error in errors:
+                    st.error(error)
+            else:
+                data_manager.save_data(file, inventory)
+                st.success("New Product Added")
+                time.sleep(1)
+                st.rerun()
+
+
+def Update():
+    pass

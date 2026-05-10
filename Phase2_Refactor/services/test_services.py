@@ -26,7 +26,8 @@ def registration(users: list[Dict], new_email: str, new_password: str, new_role:
     if reg_errors:
         return reg_errors
 
-    new_id = max([int(user["id"]) for user in users], default=0) + 1
+    for user in users:
+        new_id = int(user["id"]) + 1
 
     users.append({
         "id": str(new_id),
@@ -37,29 +38,3 @@ def registration(users: list[Dict], new_email: str, new_password: str, new_role:
     return []
 
 
-#Owner Role:
-def Add_new_product():
-    pass
-
-def Update_prices():
-    pass
-
-def Restock_Inv():
-    pass
-
-def del_discontinued_items():
-    pass
-
-#Employee Role:
-
-def current_cat():
-    pass
-
-def inv():
-    pass
-
-def daily_sales():
-    pass
-
-def ded_inv():
-    pass
