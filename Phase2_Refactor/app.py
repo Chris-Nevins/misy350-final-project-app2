@@ -70,37 +70,3 @@ elif st.session_state["role"] == "Owner":
             pass
 
 #Employee
-elif st.session_state["role"] == "Employee":
-    if st.session_state["page"] == "home":
-        st.markdown("Welcome! This is the Owner dashboard")
-        if st.button("Go to Dashboard", key= "dashboard_view_btn", type= "primary", use_container_width=True):
-            st.session_state["page"] = "dashboard"
-            st.rerun()
-    elif st.session_state["page"] == "dashboard":
-        st.markdown("Dashboard")    
-
-        if st.button("Log out", type="primary", width='content'):
-            st.session_state["logged_in"] = False
-            st.session_state["user"] = None
-            st.session_state["role"] = None
-            st.session_state["page"] = "login"
-            import time
-            time.sleep(1)
-            st.rerun()
-
-        tab1, tab2, tab3, tab4, tab5 = st.tabs(["Add New Product", "Update Prices", "Restocking", "Deleting", "AI Chatbot"])    
-
-        with tab1:
-            auth_ui.New_Product("Phase2_Refactor/inventory.json")
-
-        with tab2:
-            auth_ui.Update("Phase2_Refactor/inventory.json")
-
-        with tab3:
-            auth_ui.Restock("Phase2_Refactor/inventory.json")
-
-        with tab4:
-            auth_ui.Delete("Phase2_Refactor/inventory.json")
-
-        with tab5:
-            pass
