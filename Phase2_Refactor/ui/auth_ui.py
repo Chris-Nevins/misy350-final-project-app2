@@ -230,7 +230,7 @@ def Inv():
     with st.container(border=True):
         if viewing_inventory:
             st.dataframe(viewing_inventory, use_container_width=True)
-
+            
             total_stock = sum(i["stock"] for i in viewing_inventory)
             st.metric("Total Stock", total_stock)
 
