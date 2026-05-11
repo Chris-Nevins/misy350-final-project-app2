@@ -301,4 +301,4 @@ def Revenue(file: str):
                 time.sleep(3)
                 st.rerun
         else:
-            st.error("Unable to find an item that matches the Inventory or Product Lgo")
+            st.error("Unable to find an item that matches the Inventory or Product Log.")
