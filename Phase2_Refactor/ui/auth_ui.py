@@ -1,6 +1,6 @@
 import streamlit as st
 from services.test_services import user_auth, registration
-from services.owner_services import Add_new_product, Update_prices
+from services.owner_services import Add_new_product, Update_prices, Restock_Inv, del_discontinued_items
 import time
 from data import data_manager
 from pathlib import Path
@@ -58,6 +58,7 @@ def reg_render(file : str):
         st.write("---")
         st.dataframe(users)
 
+#Owner
 def New_Product(file: str):
     # Section 1: Add New Product (Create)
     inventory = st.session_state["inventory"]
@@ -121,3 +122,87 @@ def Update(file:str):
 
     else:
         st.error("No item(s) found please try again")
+
+def Restock(file:str):
+    # Section 3: Restock (Update)
+    inventory = st.session_state["inventory"]
+    st.header("Restock Inventory")
+    with st.container(border=True):
+        if not inventory:
+            st.warning("No inventory available to restock")
+
+        else:
+            item_selected = [item["name"] for item in inventory]
+            Select_Name = st.selectbox("Select an item to restock", item_selected)
+            selected_item = Restock_Inv(inventory, Select_Name)
+
+
+            Restock_Quantity = st.number_input("Restock Quantity", min_value=1, step=1)
+
+            if selected_item:
+                st.write(f"Current stock: {selected_item['stock']}")
+
+            if st.button("Restock"):
+                if selected_item is None:
+                    st.error("Please select an item")
+                else:
+                    selected_item["stock"] += Restock_Quantity
+
+
+                    data_manager.save_data(file, inventory)
+                    st.success(f"{selected_item['name']} is successfully restocked")
+                    st.success(f"New Stock: {selected_item['stock']}")
+                    time.sleep(1)
+                    st.rerun()
+
+def Delete(file:str):
+    # Section 4: Deleting Discontinued Items (Delete/Cancel)
+    inventory = st.session_state["inventory"]
+    st.header("Delete Discontinued Item(s)")
+    with st.container(border=True):
+        if not inventory:
+            st.warning("No inventory available to delete")
+            return
+
+        product_names = []
+        for dis_item in inventory:
+            product_names.append(dis_item["name"])
+        Selected_dis_product = st.selectbox("Select the discontinued item", product_names)
+
+        discontinued_name = {}
+        for dis_item in inventory:
+            if dis_item["name"] == Selected_dis_product:
+                discontinued_name = dis_item
+                break
+                
+        if discontinued_name:
+            st.write("### Selected Item Details:")
+            st.write(f"**Item ID**: {discontinued_name['id']}")
+            st.write(f"**Name**: {discontinued_name['name']}")
+            st.write(f"**Category**: {discontinued_name['category']}")
+            st.write(f"**Price**: {discontinued_name['price']}")
+            st.write(f"**Stock**: {discontinued_name['stock']}")
+
+            btn_delete = st.button("Delete Item")
+
+            if btn_delete:
+                deleted_item = del_discontinued_items(inventory, Selected_dis_product)
+
+                if deleted_item:
+                    data_manager.save_data(file, inventory)
+                    st.success(f"{Selected_dis_product} was deleted successfully")
+                    time.sleep(1)
+                    st.rerun()
+                else:
+                    st.error("Item could not be found")
+
+#Employee
+
+def Cat():
+    pass
+
+def Inv():
+    pass
+
+def Revenue()
+    pass

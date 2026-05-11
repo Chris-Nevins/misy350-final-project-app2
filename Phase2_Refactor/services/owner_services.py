@@ -56,8 +56,17 @@ def Update_prices(inventory: list[Dict], search: str):
         filtered_inventory = inventory
     return filtered_inventory
 
-def Restock_Inv():
-    pass
+def Restock_Inv(inventory: list[Dict], Select_Name: str):
+    for item in inventory:
+        if item["name"] == Select_Name:
+            return item
 
-def del_discontinued_items():
-    pass
+    return None
+
+def del_discontinued_items(inventory: list[Dict], selected_name: str):
+    for item in inventory:
+        if item["name"] == selected_name:
+            inventory.remove(item)
+            return item
+
+    return None

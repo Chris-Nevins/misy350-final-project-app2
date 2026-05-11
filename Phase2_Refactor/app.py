@@ -19,7 +19,6 @@ if "page" not in st.session_state:
 
 #JSON
 if "inventory" not in st.session_state:
-
     st.session_state["inventory"] = data_manager.load_data(Path("Phase2_Refactor/inventory.json"))
 
 if "product_log" not in st.session_state:
@@ -44,7 +43,7 @@ elif st.session_state["role"] == "Owner":
     elif st.session_state["page"] == "dashboard":
         st.markdown("Dashboard")    
 
-        if st.button("Log out", type="primary", use_container_width=True):
+        if st.button("Log out", type="primary", width='content'):
             st.session_state["logged_in"] = False
             st.session_state["user"] = None
             st.session_state["role"] = None
@@ -53,7 +52,7 @@ elif st.session_state["role"] == "Owner":
             time.sleep(4)
             st.rerun()
 
-        tab1, tab2, tab3, tab4 = st.tabs(["Add New Product", "Update Prices", "Restocking", "Deleting" "Restocking", "Deleting"])    
+        tab1, tab2, tab3, tab4, tab5 = st.tabs(["Add New Product", "Update Prices", "Restocking", "Deleting", "AI Chatbot"])    
 
         with tab1:
             auth_ui.New_Product("Phase2_Refactor/inventory.json")
@@ -62,9 +61,12 @@ elif st.session_state["role"] == "Owner":
             auth_ui.Update("Phase2_Refactor/inventory.json")
 
         with tab3:
-            pass
+            auth_ui.Restock("Phase2_Refactor/inventory.json")
 
         with tab4:
+            auth_ui.Delete("Phase2_Refactor/inventory.json")
+
+        with tab5:
             pass
 
-#
+#Employee

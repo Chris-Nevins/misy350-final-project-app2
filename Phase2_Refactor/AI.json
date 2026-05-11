@@ -1,0 +1,10 @@
+[
+    {
+        "role": "Owner",
+        "content": "Hello! What can I help you with today?"
+    },
+    {
+        "role": "Employee",
+        "content": "Hello! What can I help you with today?"
+    }
+]
