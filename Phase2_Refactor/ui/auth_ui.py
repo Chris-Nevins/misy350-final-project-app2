@@ -199,10 +199,106 @@ def Delete(file:str):
 #Employee
 
 def Cat():
-    pass
+    inventory = st.session_state["inventory"]
+    st.header("Current Catalog")
+    with st.container(border=True):
+        search = st.text_input("Search", placeholder="filter items by name")
+
+        if search:
+            viewing_inventory = []
+            for item in inventory:
+                if search.lower() in item["name"].lower():
+                    viewing_inventory.append(item)
+        else:
+            viewing_inventory = inventory
+
+        st.session_state["viewimg_inventory"] = viewing_inventory
+
+        if viewing_inventory:
+            st.subheader("Current Inventory")
+            st.dataframe(viewing_inventory, use_container_width=True)
+
+            total_stock = sum(i["stock"] for i in viewing_inventory)
+            st.metric("Total Stock", total_stock)
+        else:
+            st.error("No item(s) found, please try again.")
+
 
 def Inv():
-    pass
+    viewing_inventory = st.session_state.get("viewing_inventory", st.session_state["inventory"])
+    st.header("Inventory")
+    with st.container(border=True):
+        if viewing_inventory:
+            st.dataframe(viewing_inventory, use_container_width=True)
+            
+            total_stock = sum(i["stock"] for i in viewing_inventory)
+            st.metric("Total Stock", total_stock)
 
-def Revenue():
-    pass
+            low_stock_items = []
+            for item in viewing_inventory:
+                if item ["stock"] < 5:
+                    low_stock_items.append(item)
+
+            if low_stock_items:
+                st.warning("Low Stock on the following item(s):")
+                st.dataframe(low_stock_items, use_container_width=True)
+            else:
+                st.success("All items are in stock")
+        else:
+            st.error("No inventory")
+
+def Revenue(file: str):
+    inventory = st.session_state["inventory"]
+    product_log = st.session_state["product_log"]
+    viewing_inventory = st.session_state.get("viewing_inventory", inventory)
+    st.header("Daily Sales")
+    with st.connection(border=True):
+        matching_products = []
+
+        for product in product_log:
+            for item in viewing_inventory:
+                if product ["Item"] == item["name"]:
+                    matching_products.append(product)
+                    break
+
+        if matching_products:
+            st.dataframe(matching_products, use_container_width=True)
+        else:
+            st.info("No product found for matching item(s).")
+
+    with st.container(border=True):
+        st.header("Deduct from Inventory")
+
+        sold_items = []
+        for sold in product_log:
+            sold_items.append("Select sold item", sold_items)
+
+        Sel_Name = st.selectbox("Select sold item", sold_items)
+
+        sel_sale = None
+        for sale in product_log:
+            if sale["Item"] == Sel_Name:
+                sel_sale =sale
+                break
+        
+        sel_inv = None
+        for item in inventory:
+            if item ["name"] == Sel_Name:
+                sel_inv = item
+                break
+        
+        if sel_sale and sel_inv:
+            st.write(f"Quantity Sold: {sel_sale['Amount sold']}")
+            st.write(f"Current Inventory: {sel_inv['stock']}")
+
+            if st.button("Edit Inventory"):
+                sel_inv["stock"] -= sel_sale["Amount sold"]
+
+                data_manager.save_data(file, inventory)
+
+                st.success("Inventory Updated")
+                st.write(f"New Inventory: {sel_inv['sstock']}")
+                time.sleep(3)
+                st.rerun
+        else:
+            st.error("Unable to find an item that matches the Inventory or Product Lgo")
