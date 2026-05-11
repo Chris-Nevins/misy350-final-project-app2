@@ -70,3 +70,40 @@ elif st.session_state["role"] == "Owner":
             pass
 
 #Employee
+elif st.session_state["role"] == "Employee":
+    if st.session_state["page"] == "home":
+        st.markdown("Welcome! This is the Employee dashboard")
+        if st.button("Go to Dashboard", key="employee_dashboard_btn", type="primary", use_container_width=True):
+            st.session_state["page"] = "dashboard"
+            st.rerun()
+    elif st.session_state["page"] == "dashboard":
+        st.markdown("Employee Dashboard")
+        
+        if st.button("Log out", type="primary", use_container_width=True):
+            st.session_state["logged_in"] = False
+            st.session_state["user"] = None
+            st.session_state["role"] = None
+            st.session_state["page"] = "login"
+            import time
+            time.sleep(1)
+            st.rerun()
+        
+        tab1, tab2, tab3 = st.tabs(["View Inventory", "Low Stock Items", "Daily Sales"])
+        
+        with tab1:
+            auth_ui.Inv()
+        
+        with tab2:
+            from services import employee_services
+            low_stock = employee_services.inv(st.session_state["inventory"], threshold=10)
+            if low_stock:
+                st.dataframe(low_stock)
+            else:
+                st.info("All items are well-stocked!")
+        
+        with tab3:
+            st.write("Daily Sales Report")
+            if st.session_state["product_log"]:
+                st.dataframe(st.session_state["product_log"])
+            else:
+                st.info("No sales data available yet")
