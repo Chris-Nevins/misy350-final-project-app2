@@ -231,7 +231,7 @@ def Inv():
             st.dataframe(viewing_inventory, use_container_width=True)
 
             # Display low-stock items using `inv` from employee_services
-            low_stock_items = inv(viewing_inventory, threshold=10)
+            low_stock_items = inv(viewing_inventory, threshold=10)  # Call the correct inv function
             if low_stock_items:
                 st.warning("Low Stock on the following item(s):")
                 st.dataframe(low_stock_items, use_container_width=True)
@@ -239,6 +239,22 @@ def Inv():
                 st.success("All items are sufficiently stocked.")
         else:
             st.error("No inventory available.")
+
+
+#def Sales(file: str):
+    #inventory = st.session_state.get("inventory", [])
+    #product_log = st.session_state.get("product_log", [])
+    #viewing_inventory = st.session_state.get("viewing_inventory", inventory)
+
+    #st.header("Daily Sales")
+    #with st.container(border=True):
+        # Use the daily_sales function to filter today's sales
+        #today_sales = daily_sales(product_log)
+
+        #if today_sales:
+            st.dataframe(today_sales, use_container_width=True)
+        #else:
+            #st.info("No sales recorded for today.")
 
 def Revenue(file: str):
     inventory = st.session_state["inventory"]

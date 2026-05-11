@@ -101,11 +101,5 @@ elif st.session_state["role"] == "Employee":
 
         # Third Tab: Daily Sales
         with tab3:
-            st.subheader("Daily Sales Report")
-            from services.employee_services import daily_sales
-            today_sales = daily_sales(st.session_state["product_log"])
-
-            if today_sales:
-                st.dataframe(today_sales, use_container_width=True)
-            else:
-                st.info("No sales data available yet.")
+            #auth_ui.Sales("Phase2_Refactor/product_log.json")
+            pass

@@ -24,11 +24,8 @@ def inv(inventory: List[Dict], threshold: int = 10) -> List[Dict]:
 
 # 3) Get today's sales only
 def daily_sales(sales_data: List[Dict]) -> List[Dict]:
-    today = date.today().isoformat()
-    return [
-        sale for sale in sales_data
-        if sale.get("date") == today
-    ]
+    today = date.today().isoformat() 
+    return [sale for sale in sales_data if sale.get("date") == today]
 
 
 # 4) Deduct sold quantities from inventory
