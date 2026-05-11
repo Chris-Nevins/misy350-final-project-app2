@@ -73,12 +73,12 @@ elif st.session_state["role"] == "Owner":
 elif st.session_state["role"] == "Employee":
     if st.session_state["page"] == "home":
         st.markdown("Welcome! This is the Employee dashboard")
-        if st.button("Go to Dashboard", key="employee_dashboard_btn", type="primary", use_container_width=True):
+        if st.button("Go to Dashboard", key="dashboard_view_btn", type="primary", use_container_width=True):
             st.session_state["page"] = "dashboard"
             st.rerun()
     elif st.session_state["page"] == "dashboard":
-        st.markdown("Employee Dashboard")
-        
+        st.markdown("Dashboard")
+
         if st.button("Log out", type="primary", use_container_width=True):
             st.session_state["logged_in"] = False
             st.session_state["user"] = None
@@ -87,23 +87,25 @@ elif st.session_state["role"] == "Employee":
             import time
             time.sleep(1)
             st.rerun()
-        
+
+        # Define tabs for the employee dashboard
         tab1, tab2, tab3 = st.tabs(["View Inventory", "Low Stock Items", "Daily Sales"])
-        
+
+        # First Tab: View Inventory
         with tab1:
-            auth_ui.Inv()
-        
+            auth_ui.Cat()
+
+        # Second Tab: Low Stock Items
         with tab2:
-            from services import employee_services
-            low_stock = employee_services.inv(st.session_state["inventory"], threshold=10)
-            if low_stock:
-                st.dataframe(low_stock)
-            else:
-                st.info("All items are well-stocked!")
-        
+            auth_ui.Inv()
+
+        # Third Tab: Daily Sales
         with tab3:
-            st.write("Daily Sales Report")
-            if st.session_state["product_log"]:
-                st.dataframe(st.session_state["product_log"])
+            st.subheader("Daily Sales Report")
+            from services.employee_services import daily_sales
+            today_sales = daily_sales(st.session_state["product_log"])
+
+            if today_sales:
+                st.dataframe(today_sales, use_container_width=True)
             else:
-                st.info("No sales data available yet")
+                st.info("No sales data available yet.")

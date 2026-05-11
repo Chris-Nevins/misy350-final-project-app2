@@ -1,6 +1,7 @@
 import streamlit as st
 from services.test_services import user_auth, registration
 from services.owner_services import Add_new_product, Update_prices, Restock_Inv, del_discontinued_items
+from services.employee_services import current_cat, inv, daily_sales, ded_inv
 import time
 from data import data_manager
 from pathlib import Path
@@ -197,55 +198,47 @@ def Delete(file:str):
                     st.error("Item could not be found")
 
 #Employee
-
+# Employee Catalog
 def Cat():
     inventory = st.session_state["inventory"]
     st.header("Current Catalog")
     with st.container(border=True):
-        search = st.text_input("Search", placeholder="filter items by name")
+        # Search functionality using `current_cat` from employee_services
+        search = st.text_input("Search", placeholder="Filter items by name")
+        viewing_inventory = current_cat(inventory, search)
 
-        if search:
-            viewing_inventory = []
-            for item in inventory:
-                if search.lower() in item["name"].lower():
-                    viewing_inventory.append(item)
-        else:
-            viewing_inventory = inventory
+        # Store the filtered inventory in session state
+        st.session_state["viewing_inventory"] = viewing_inventory
 
-        st.session_state["viewimg_inventory"] = viewing_inventory
-
+        # Display the filtered inventory
         if viewing_inventory:
             st.subheader("Current Inventory")
             st.dataframe(viewing_inventory, use_container_width=True)
 
-            total_stock = sum(i["stock"] for i in viewing_inventory)
+            # Display total stock
+            total_stock = sum(item.get("stock", 0) for item in viewing_inventory)
             st.metric("Total Stock", total_stock)
         else:
             st.error("No item(s) found, please try again.")
 
-
+# Employee Inventory
 def Inv():
     viewing_inventory = st.session_state.get("viewing_inventory", st.session_state["inventory"])
-    st.header("Inventory")
+    st.header("Inventory Overview")
     with st.container(border=True):
         if viewing_inventory:
+            # Display the full inventory
             st.dataframe(viewing_inventory, use_container_width=True)
-            
-            total_stock = sum(i["stock"] for i in viewing_inventory)
-            st.metric("Total Stock", total_stock)
 
-            low_stock_items = []
-            for item in viewing_inventory:
-                if item ["stock"] < 5:
-                    low_stock_items.append(item)
-
+            # Display low-stock items using `inv` from employee_services
+            low_stock_items = inv(viewing_inventory, threshold=10)
             if low_stock_items:
                 st.warning("Low Stock on the following item(s):")
                 st.dataframe(low_stock_items, use_container_width=True)
             else:
-                st.success("All items are in stock")
+                st.success("All items are sufficiently stocked.")
         else:
-            st.error("No inventory")
+            st.error("No inventory available.")
 
 def Revenue(file: str):
     inventory = st.session_state["inventory"]
