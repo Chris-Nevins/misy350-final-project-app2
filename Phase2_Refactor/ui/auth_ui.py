@@ -1,7 +1,10 @@
 import streamlit as st
+import os
 from services.test_services import user_auth, registration
 from services.owner_services import Add_new_product, Update_prices, Restock_Inv, del_discontinued_items
 from services.employee_services import current_cat, inv, daily_sales, ded_inv
+from services.AI_helper_services import api_key, client, get_ai_response
+
 import time
 from data import data_manager
 from pathlib import Path
@@ -197,6 +200,67 @@ def Delete(file:str):
                 else:
                     st.error("Item could not be found")
 
+def AI_Owner(file:str):
+    logs = st.session_state["AI"]
+    st.header("AI Helper")
+
+    if not api_key or client is None:
+        st.error("OpenAI key or package was not found")
+        st.stop()
+
+    if "messages" not in st.session_state:
+        st.session_state['messages'] = []
+        for log in logs:
+            st.session_state['messages'].append(
+                {
+                    'role': 'owner' if log['role'] != 'user' else 'user',
+                    'content': log['content']
+                }
+            )
+
+        if len(logs) == 0:
+            st.session_state['messages'].append(
+                {
+                    'role': 'owner',
+                    'content': 'Hello! What can I help you with today?'
+                }
+            )
+
+    with st.container(border=True, height=400):
+        for message in st.session_state['messages']:
+            with st.chat_message(message['role']):
+                st.markdown(message['content'])
+
+    user_input = st.chat_input("Type your question...")
+
+    if user_input:
+        st.session_state['messages'].append(
+            {
+                'role':'user',
+                'content': user_input
+            }
+        )
+        with st.chat_message('user'):
+            st.markdown(user_input)
+
+        with st.chat_message('owner'):
+            with st.spinner("thinking..."):
+                ai_response = get_ai_response(
+                    client=client,
+                    chat_history=st.session_state['messages'],
+                    context_hint="healthcare"
+                )
+
+                st.markdown(ai_response)
+
+                st.session_state['messages'].append(
+                    {
+                        'role': 'owner',
+                        'content': ai_response
+                    }
+                )
+                data_manager.save_data(Path(file), st.session_state['messages'])
+
 #Employee
 # Employee Catalog
 def Cat():
@@ -252,10 +316,11 @@ def Inv():
         #today_sales = daily_sales(product_log)
 
         #if today_sales:
-            st.dataframe(today_sales, use_container_width=True)
+            #st.dataframe(today_sales, use_container_width=True)
         #else:
             #st.info("No sales recorded for today.")
 
+# Employee Daily Sales
 def Revenue(file: str):
     inventory = st.session_state["inventory"]
     product_log = st.session_state["product_log"]
@@ -311,3 +376,65 @@ def Revenue(file: str):
                 st.rerun
         else:
             st.error("Unable to find an item that matches the Inventory or Product Log.")
+
+# Employee AI Chatbot
+def AI_employee(file: str):
+    logs = st.session_state["AI"]
+    st.header("AI Helper")
+
+    if not api_key or client is None:
+        st.error("OpenAI key or package was not found")
+        st.stop()
+
+    if "messages" not in st.session_state:
+        st.session_state['messages'] = []
+        for log in logs:
+            st.session_state['messages'].append(
+                {
+                    'role': 'employee' if log['role'] != 'user' else 'user',
+                    'content': log['content']
+                }
+            )
+
+        if len(logs) == 0:
+            st.session_state['messages'].append(
+                {
+                    'role': 'employee',
+                    'content': 'Hello! What can I help you with today?'
+                }
+            )
+
+    with st.container(border=True, height=400):
+        for message in st.session_state['messages']:
+            with st.chat_message(message['role']):
+                st.markdown(message['content'])
+
+    user_input = st.chat_input("Type your question...")
+
+    if user_input:
+        st.session_state['messages'].append(
+            {
+                'role':'user',
+                'content': user_input
+            }
+        )
+        with st.chat_message('user'):
+            st.markdown(user_input)
+
+        with st.chat_message('employee'):
+            with st.spinner("thinking..."):
+                ai_response = get_ai_response(
+                    client=client,
+                    chat_history=st.session_state['messages'],
+                    context_hint="healthcare"
+                )
+
+                st.markdown(ai_response)
+
+                st.session_state['messages'].append(
+                    {
+                        'role': 'employee',
+                        'content': ai_response
+                    }
+                )
+                data_manager.save_data(Path(file), st.session_state['messages'])

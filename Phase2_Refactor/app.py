@@ -27,6 +27,9 @@ if "product_log" not in st.session_state:
 if "users" not in st.session_state:
     st.session_state["users"] = data_manager.load_data(Path("Phase2_Refactor/users.json"))
 
+if "AI" not in st.session_state:
+    st.session_state["AI"] = data_manager.load_data(Path("Phase2_Refactor/AI.json"))
+
 from ui import auth_ui
 
 if not st.session_state["logged_in"]:
@@ -89,7 +92,7 @@ elif st.session_state["role"] == "Employee":
             st.rerun()
 
         # Define tabs for the employee dashboard
-        tab1, tab2, tab3 = st.tabs(["View Inventory", "Low Stock Items", "Daily Sales"])
+        tab1, tab2, tab3, tab4 = st.tabs(["View Inventory", "Low Stock Items", "Daily Sales", "AI Helper"])
 
         # First Tab: View Inventory
         with tab1:
@@ -103,3 +106,6 @@ elif st.session_state["role"] == "Employee":
         with tab3:
             #auth_ui.Sales("Phase2_Refactor/product_log.json")
             pass
+
+        with tab4:
+            auth_ui.AI_employee("Phase2_Refactor/AI.json")
