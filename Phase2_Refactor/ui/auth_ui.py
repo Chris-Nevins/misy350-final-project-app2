@@ -2,7 +2,7 @@ import streamlit as st
 import os
 from services.test_services import user_auth, registration
 from services.owner_services import Add_new_product, Update_prices, Restock_Inv, del_discontinued_items
-from services.employee_services import current_cat, inv, daily_sales, ded_inv
+from services.employee_services import current_cat, inv, daily_sales
 from services.AI_helper_services import api_key, client, get_ai_response
 
 import time
@@ -295,7 +295,7 @@ def Inv():
             st.dataframe(viewing_inventory, use_container_width=True)
 
             # Display low-stock items using `inv` from employee_services
-            low_stock_items = inv(viewing_inventory, threshold=10)  # Call the correct inv function
+            low_stock_items = inv(viewing_inventory, threshold=5)  # Call the correct inv function
             if low_stock_items:
                 st.warning("Low Stock on the following item(s):")
                 st.dataframe(low_stock_items, use_container_width=True)
@@ -304,34 +304,18 @@ def Inv():
         else:
             st.error("No inventory available.")
 
-
-#def Sales(file: str):
-    #inventory = st.session_state.get("inventory", [])
-    #product_log = st.session_state.get("product_log", [])
-    #viewing_inventory = st.session_state.get("viewing_inventory", inventory)
-
-    #st.header("Daily Sales")
-    #with st.container(border=True):
-        # Use the daily_sales function to filter today's sales
-        #today_sales = daily_sales(product_log)
-
-        #if today_sales:
-            #st.dataframe(today_sales, use_container_width=True)
-        #else:
-            #st.info("No sales recorded for today.")
-
 # Employee Daily Sales
-def Revenue(file: str):
+def Revenue(inventory_file: str):
     inventory = st.session_state["inventory"]
     product_log = st.session_state["product_log"]
     viewing_inventory = st.session_state.get("viewing_inventory", inventory)
     st.header("Daily Sales")
-    with st.connection(border=True):
+    with st.container(border=True):
         matching_products = []
 
         for product in product_log:
             for item in viewing_inventory:
-                if product ["Item"] == item["name"]:
+                if product["Item"] == item["name"]:
                     matching_products.append(product)
                     break
 
@@ -345,7 +329,7 @@ def Revenue(file: str):
 
         sold_items = []
         for sold in product_log:
-            sold_items.append("Select sold item", sold_items)
+            sold_items.append(sold["Item"])
 
         Sel_Name = st.selectbox("Select sold item", sold_items)
 
@@ -368,12 +352,12 @@ def Revenue(file: str):
             if st.button("Edit Inventory"):
                 sel_inv["stock"] -= sel_sale["Amount sold"]
 
-                data_manager.save_data(file, inventory)
+                data_manager.save_data(inventory_file, inventory)
 
                 st.success("Inventory Updated")
-                st.write(f"New Inventory: {sel_inv['sstock']}")
+                st.write(f"New Inventory: {sel_inv['stock']}")
                 time.sleep(3)
-                st.rerun
+                st.rerun()
         else:
             st.error("Unable to find an item that matches the Inventory or Product Log.")
 

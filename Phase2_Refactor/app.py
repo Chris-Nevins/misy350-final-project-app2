@@ -22,7 +22,7 @@ if "inventory" not in st.session_state:
     st.session_state["inventory"] = data_manager.load_data(Path("Phase2_Refactor/inventory.json"))
 
 if "product_log" not in st.session_state:
-    st.session_state["product_log"] = data_manager.load_data(Path("Phase2_Refactor/product.json"))
+    st.session_state["product_log"] = data_manager.load_data(Path("Phase2_Refactor/product_log.json"))
 
 if "users" not in st.session_state:
     st.session_state["users"] = data_manager.load_data(Path("Phase2_Refactor/users.json"))
@@ -104,8 +104,9 @@ elif st.session_state["role"] == "Employee":
 
         # Third Tab: Daily Sales
         with tab3:
-            #auth_ui.Sales("Phase2_Refactor/product_log.json")
-            pass
+            auth_ui.Revenue("Phase2_Refactor/inventory.json")
 
+
+        # Fourth Tab: AI Chatbot
         with tab4:
             auth_ui.AI_employee("Phase2_Refactor/AI.json")
