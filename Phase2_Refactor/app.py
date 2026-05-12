@@ -70,7 +70,7 @@ elif st.session_state["role"] == "Owner":
             auth_ui.Delete("Phase2_Refactor/inventory.json")
 
         with tab5:
-            pass
+            auth_ui.AI_employee("Phase2_Refactor/AI.json")
 
 #Employee
 elif st.session_state["role"] == "Employee":
