@@ -1,10 +1,6 @@
 [
     {
-        "role": "Owner",
-        "content": "Hello! What can I help you with today?"
-    },
-    {
-        "role": "Employee",
+        "role": "User",
         "content": "Hello! What can I help you with today?"
     }
 ]
