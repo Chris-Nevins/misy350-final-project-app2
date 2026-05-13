@@ -3,4 +3,17 @@
    "Item": "AMD Ryzen 7 7800X3D CPU",
    "Product Type": "Processor",
    "Amount sold": 3
-   }]
+   },
+   {
+   "Product ID": "Product_102",
+   "Item": "TP-Link WiFi 6 PCIe Card",
+   "Product Type": "Networking",
+   "Amount sold": 5
+   },
+   {
+   "Product ID": "Product_103",
+   "Item": "G.skill Trident Z RGB DDR4",
+   "Product Type": "Memory",
+   "Amount sold": 6
+   }
+]

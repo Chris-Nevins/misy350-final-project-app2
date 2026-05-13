@@ -110,5 +110,12 @@
         "category": "GPU",
         "price": 198,
         "stock": 2
+    },
+    {
+        "id": 17,
+        "name": "G.skill Trident Z RGB DDR4",
+        "category": "Memory",
+        "price": 185,
+        "stock": 14
     }
 ]

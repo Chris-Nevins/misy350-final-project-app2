@@ -40,7 +40,6 @@ def log_out():
     st.session_state["user"] = None
     st.session_state["role"] = None
     st.session_state["page"] = "login"
-    st.session_state["employee_dashboard_view"] = "tabs"
     st.rerun()
 
 if not st.session_state["logged_in"]:
