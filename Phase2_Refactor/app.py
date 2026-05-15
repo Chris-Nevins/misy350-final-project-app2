@@ -17,8 +17,6 @@ if "role" not in st.session_state:
 if "page" not in st.session_state:
     st.session_state["page"] = "login"
 
-if "employee_dashboard_view" not in st.session_state:
-    st.session_state["employee_dashboard_view"] = "tabs"
 
 #JSON
 if "inventory" not in st.session_state:
